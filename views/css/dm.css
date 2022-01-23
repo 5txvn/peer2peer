@@ -1,0 +1,24 @@
+  .form {
+      bottom: 0;
+      margin-bottom: 3%;
+      margin-left: 3%;
+      position: fixed;
+      width: 100%;
+    }
+    input {
+      width: 95%;
+      border-color: black;
+      border-radius: 5px;
+    }
+    #messages {
+      overflow: auto;
+      height: 75%;
+      position: fixed;
+      width: 100%;
+      margin-left: 3%;
+      margin-top: 2%;
+    }
+    ::-webkit-scrollbar {
+      width: 0; /* Remove scrollbar space */
+      background: transparent; /* Optional: just make scrollbar invisible */
+    }

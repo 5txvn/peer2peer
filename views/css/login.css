@@ -1,0 +1,34 @@
+.title {
+    margin-top: 3.5%;
+    margin-left: 3%;
+}
+
+.input {
+    margin-left: 3%;
+    border-radius:5px;
+    border-style:solid;
+    border-color:black;
+}
+
+.tag {
+    margin-left: 3%;
+    margin-top:2.5%;
+}
+
+.info {
+    margin-left: 3%;
+}
+
+.submit {
+    margin-top:4%;
+    margin-left: 3%;
+    border-radius:10px;
+    width:90px;
+    border-style:none;
+    color: white;
+    height: 30px;
+}
+
+.dropdown {
+    margin-left: 3%;
+}

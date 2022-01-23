@@ -1,0 +1,33 @@
+{
+  "name": "peer2peer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exoticchild/peer2peer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exoticchild/peer2peer/issues"
+  },
+  "homepage": "https://github.com/exoticchild/peer2peer#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "chalk": "^5.0.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^14.2.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.7.2",
+    "socket.io": "^4.4.1",
+    "stormdb": "^0.5.2"
+  }
+}

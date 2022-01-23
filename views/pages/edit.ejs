@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/scripts/socket.io.js"></script>
+    </head>
+    <body>
+        <p id="socket">test</p>
+    </body>
+    <script>
+        const socket = io()
+        socket.on('test', data => {
+            console.log(data)
+        })
+    </script>
+</html>
