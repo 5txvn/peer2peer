@@ -18,21 +18,22 @@ app.use(express.json())
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
+
 //other modules
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require('nodemailer');
 require('dotenv').config()
 
+//stormdb stuff
 const StormDB = require("stormdb");
-const req = require("express/lib/request");
-//const req = require("express/lib/request");
 const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
 const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
 const questionsDB = new StormDB(questionsEngine);
 questionsDB.default({"questions": []})
 
+//for feedback emailing
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
@@ -45,12 +46,16 @@ const transporter = nodemailer.createTransport({
 
 app.get("/", (req, res) => {
   if (!req.cookies.id) {
-    res.render("pages/login");
+    res.render("pages/landing");
   } else {
     res.render("index");
   }
   console.log(req.session)
 });
+
+app.get('/login', (req, res) => {
+  res.render('pages/login');
+})
 
 
 app.get("/signup", (req, res) => {
