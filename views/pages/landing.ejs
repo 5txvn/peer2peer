@@ -76,23 +76,13 @@
     emojiRandom()
     setInterval(() => {
         emojiRandom()
-    }, Math.floor(Math.random() * 100 + 1900))
+    }, Math.floor(Math.random() * 100 + 900))
     $(document).ready(() => {
-        $('#subheading').hide();
-        $('#emojirandom').hide();
-        $('.signup').hide();
-        $('.login').hide();
     $("#title").hide().slideDown(1000);
-    $('#emojirandom').hide().slideDown(1000);
-    setTimeout(() => {
-        $("#subheading").slideDown(1000);
-    }, 1250);
-    setTimeout(() => {
-        $('.signup').slideDown(1000);
-    }, 2500);
-    setTimeout(() => {
-        $('.login').slideDown(1000);
-    }, 3500);
+    $("#emojirandom").hide().slideDown(1000);
+    $("#subheading").hide().slideDown(1000);
+    $(".signup").hide().slideDown(1000);
+    $(".login").hide().slideDown(1000);
 })
 </script>
 </html>

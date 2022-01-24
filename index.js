@@ -62,6 +62,10 @@ app.get("/signup", (req, res) => {
   res.render("pages/signup");
 });
 
+app.get('/landing', (req, res) => {
+  res.render('pages/landing');
+})
+
 
 app.post("/login", (req, res) => {
   const username = req.body.username;

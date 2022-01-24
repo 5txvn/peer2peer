@@ -12,19 +12,35 @@
     <link rel="stylesheet" href="/css/login.css">
     <link rel="icon" href="/assets/icon.png" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   </head>
   <body>
+    <div class="main">
       <h1 class="title">Login</h1>
       <form action="/login" method="POST">
           <!-- username -->
-          <h5 class="tag">Username</h5>
+          <h5 class="tag">👤 Username 👤</h5>
           <input class="input" name="username" type="text"/>
           <!-- password -->
-          <h5 class="tag">Password</h5>
+          <h5 class="tag">🔒 Password 🔒</h5>
           <input class="input" name="password" type="password"/>
           <br>
           <!-- submit -->
           <input class="submit bg-primary" type="submit" value="Login"/>
       </form>
+      </div>
   </body>
+  <script>
+    $(document).ready(() => {
+      $('.input').hide()
+      $('.input').slideDown(1000)
+      $(".tag").hide()
+      $(".tag").slideDown(1000)
+      $(".title").hide()
+      $(".title").slideDown(1000)
+      $('.submit').hide()
+      $('.submit').slideDown(1000)
+      //$('.title').animate({height:'toggle'}, 1000)
+    })
+  </script>
 </html>
