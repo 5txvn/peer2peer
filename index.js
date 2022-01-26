@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 //all express and socket.io related stuff
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 app.use(session({
-    secret: "secret",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
 }))
@@ -13,7 +15,7 @@ app.set("view engine", "ejs");
 app.use(express.static("views"));
 app.use(express.urlencoded({ extended: true }));
 const logger = require("morgan");
-app.use(logger("dev"));
+//app.use(logger("dev"));
 app.use(express.json())
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -23,10 +25,11 @@ const io = require("socket.io")(server);
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require('nodemailer');
-require('dotenv').config()
+const chalk = require('chalk');
 
 //stormdb stuff
 const StormDB = require("stormdb");
+const { red } = require("color-name");
 const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
 const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
@@ -44,22 +47,35 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+//routes and stuff
+app.use('/question', require('./routes/view-question'));
+
 app.get("/", (req, res) => {
-  if (!req.cookies.id) {
+  if (!req.session.username) {
     res.render("pages/landing");
+    const ip = req.headers['x-forwarded-for']
+    console.log(`An unregistered user has visited the landing page.\nIp: ${chalk.red(ip)}\n`);
   } else {
     res.render("index");
+    const ip = req.headers['x-forwarded-for']
+    const username = req.session.username
+    console.log(`${chalk.blue(username)} has connected to the main page.\nIp: ${chalk.red(ip)}\n`);
   }
-  console.log(req.session)
 });
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
+  console.log(`A user has visited the login page.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
+})
+
+app.get('/main', (req, res) => {
+  res.render('index')
 })
 
 
 app.get("/signup", (req, res) => {
   res.render("pages/signup");
+  console.log(`A user has visited the signup page.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
 });
 
 app.get('/landing', (req, res) => {
@@ -73,14 +89,15 @@ app.post("/login", (req, res) => {
   const data = logins.state[username];
   if (bcrypt.compareSync(password, data.password)) {
     console.log("logged in");
-    res.cookie("id", data.id);
-    res.cookie("username", username);
-    res.cookie("password", data.password);
-    res.cookie("email", data.email);
-    res.cookie("name", data.name);
-    req.session.test = "test"
+    req.session.username = username;
+    req.session.email = data.email;
+    req.session.name = data.name;
+    res.redirect("/");
+    console.log(`${chalk.blue(username)} has logged in.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
+  } else {
+    res.send("wrong password");
+    console.log(`Failed attempt to login under the username ${chalk.blue(username)}.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
   }
-  res.redirect("/");
 });
 
 app.post("/signup", (req, res) => {
@@ -104,6 +121,7 @@ app.post("/signup", (req, res) => {
       .set("name", name)
       .set("email", email)
       .save();
+      console.log(`${chalk.blue(username)} has signed up. Ip: ${chalk.red(req.headers['x-forwarded-for'])}`);
   } else {
     res.redirect("/signup");
   }
@@ -158,9 +176,9 @@ app.post('/submit-question', (req, res) => {
     .set("subject", subject)
     .set("topic", topic)
     .set("explain", explain)
-    .set("username", req.cookies.username)
+    .set("username", req.session.username)
     questionsDB.save()
-
+    console.log(`${chalk.blue(req.session.username)} has submitted a question.\nQuestion subject: ${chalk.cyan(subject)}\nQuestion topic: ${chalk.magenta(topic)}\nIp: ${chalk.red(req.headers['x-forwarded-for'])}`);
     res.redirect('/')
 })
 
@@ -209,11 +227,12 @@ app.get('*', (req, res) => {
 io.on("connection", socket => {
   const questionIds = questionsDB.state.questions
   var questions = [];
-  questionIds.forEach(question => {
+  questionIds.forEach((question, num) => {
     questions.push({
       subject: questionsDB.state[question].subject,
       topic: questionsDB.state[question].topic,
-      username: questionsDB.state[question].username
+      username: questionsDB.state[question].username,
+      id: questionIds[num]
     })
   })
   const emit = questions

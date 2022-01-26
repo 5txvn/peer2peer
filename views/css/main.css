@@ -1,3 +1,10 @@
+/*
+@keyframes name {
+    0% {transform: rotate(3deg);}
+    50% {transform: rotate(-3deg);}
+}
+*/
+
 .question {
     margin-top:3%;
     margin-left: 3%;
@@ -5,4 +12,14 @@
     border-radius:7.5px;
     background-color: #ececec;
     padding: 1%;
+}
+
+.name {
+    text-shadow: 1px 1px 1px #000;
+    /*
+    animation-name: name;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    transform: rotate(5deg);
+    */
 }

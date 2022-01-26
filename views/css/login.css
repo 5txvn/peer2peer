@@ -1,7 +1,6 @@
 .title {
-    margin-top: 3.5%;
     margin-left: 3%;
-    font-size: 120px;
+    font-size: 6em;
 }
 
 .input {
@@ -16,8 +15,8 @@
 
 .tag {
     margin-left: 3%;
-    margin-top:5%;
-    font-size: 48px;
+    margin-top:3%;
+    font-size:3em;
 }
 
 .info {
@@ -25,7 +24,7 @@
 }
 
 .submit {
-    margin-top:10%;
+    margin-top:3%;
     margin-left: 3%;
     padding: 10px;
     padding-left: 25px;
@@ -33,7 +32,7 @@
     border-style:none;
     border-radius: 15px;
     color: white;
-    font-size: 36px;
+    font-size: 2em;
 }
 
 .dropdown {
