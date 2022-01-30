@@ -49,6 +49,7 @@ const transporter = nodemailer.createTransport({
 
 //routes and stuff
 app.use('/question', require('./routes/view-question'));
+app.use('/about', require('./routes/navbar/about'));
 
 app.get("/", (req, res) => {
   if (!req.session.username) {
@@ -63,11 +64,6 @@ app.get("/", (req, res) => {
   }
 });
 
-app.get('/login', (req, res) => {
-  res.render('pages/login');
-  console.log(`A user has visited the login page.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
-})
-
 app.get('/main', (req, res) => {
   res.render('index')
 })
@@ -81,24 +77,6 @@ app.get("/signup", (req, res) => {
 app.get('/landing', (req, res) => {
   res.render('pages/landing');
 })
-
-
-app.post("/login", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const data = logins.state[username];
-  if (bcrypt.compareSync(password, data.password)) {
-    console.log("logged in");
-    req.session.username = username;
-    req.session.email = data.email;
-    req.session.name = data.name;
-    res.redirect("/");
-    console.log(`${chalk.blue(username)} has logged in.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
-  } else {
-    res.send("wrong password");
-    console.log(`Failed attempt to login under the username ${chalk.blue(username)}.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
-  }
-});
 
 app.post("/signup", (req, res) => {
   //hash the password
@@ -148,14 +126,6 @@ app.get("/user/:username", (req, res) => {
 
 app.get('/profile', (req, res) => {
   res.redirect('/user/' + req.cookies.username);
-})
-
-app.get('/about', (req, res) => {
-  if (!req.cookies.id) {
-    res.redirect('/');
-  } else {
-    res.render('pages/about');
-  }
 })
 
 app.get('/submit-question', (req, res) => {

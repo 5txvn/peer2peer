@@ -1,0 +1,5 @@
+const fs = require('fs')
+const jsfuck = require('jsfuck')
+const code = fs.readFileSync('./input.js', 'utf8')
+const output = jsfuck.JSFuck.encode(code)
+fs.writeFileSync('./output.js', output)
