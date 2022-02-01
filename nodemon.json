@@ -1,4 +1,4 @@
 {
-    "watch": ["views/"],
+    "watch": ["/"],
     "ext": "js, html, css, ejs"
 }

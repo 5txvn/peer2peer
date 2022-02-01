@@ -1,14 +1,26 @@
 const express = require("express");
 const router = express.Router();
 
+const bcrypt = require("bcrypt");
+const chalk = require("chalk");
+
+const StormDB = require("stormdb");
+const dbEngine = new StormDB.localFileEngine("./db/logins.db");
+const db = new StormDB(dbEngine);
+db.default({"questions": []})
+
 router.get("/", (req, res) => {
-  res.render("pages/login");
+  if (req.useragent.isBot) {
+    res.send("oops, you are a bot!")
+  } else {
+    res.render("pages/login");
+  }
 });
 
-router.post("/login", (req, res) => {
+router.post("/", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  const data = logins.state[username];
+  const data = db.state[username];
   if (bcrypt.compareSync(password, data.password)) {
     console.log("logged in");
     req.session.username = username;

@@ -14,8 +14,8 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(express.static("views"));
 app.use(express.urlencoded({ extended: true }));
-const logger = require("morgan");
-//app.use(logger("dev"));
+const useragent = require('express-useragent');
+app.use(useragent.express());
 app.use(express.json())
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -29,7 +29,6 @@ const chalk = require('chalk');
 
 //stormdb stuff
 const StormDB = require("stormdb");
-const { red } = require("color-name");
 const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
 const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
@@ -50,6 +49,10 @@ const transporter = nodemailer.createTransport({
 //routes and stuff
 app.use('/question', require('./routes/view-question'));
 app.use('/about', require('./routes/navbar/about'));
+app.use('/login', require('./routes/auth/login'));
+app.use('/signup', require('./routes/auth/signup'));
+app.use('/dashboard', require('./routes/basic/dashboard'));
+app.use('/submit-question', require('./routes/submit/submit-question.js'))
 
 app.get("/", (req, res) => {
   if (!req.session.username) {
@@ -64,47 +67,9 @@ app.get("/", (req, res) => {
   }
 });
 
-app.get('/main', (req, res) => {
-  res.render('index')
-})
-
-
-app.get("/signup", (req, res) => {
-  res.render("pages/signup");
-  console.log(`A user has visited the signup page.\nIp: ${chalk.red(req.headers['x-forwarded-for'])}\n`);
-});
-
 app.get('/landing', (req, res) => {
   res.render('pages/landing');
 })
-
-app.post("/signup", (req, res) => {
-  //hash the password
-  const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(req.body.password, salt);
-  const usernames = Object.keys(logins);
-  const username = req.body.username;
-  const email = req.body.email;
-  const name = req.body.name;
-  //set user data in sessions
-  req.session.username = username
-  req.session.email = email
-  req.session.name = name
-  if (!usernames.includes(username)) {
-    //set the login data
-    logins
-      .set(username, {})
-      .get(username)
-      .set("password", hash)
-      .set("name", name)
-      .set("email", email)
-      .save();
-      console.log(`${chalk.blue(username)} has signed up. Ip: ${chalk.red(req.headers['x-forwarded-for'])}`);
-  } else {
-    res.redirect("/signup");
-  }
-  res.redirect("/");
-});
 
 app.get("/user/:username", (req, res) => {
   console.log("reached");
@@ -124,36 +89,8 @@ app.get("/user/:username", (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
-  res.redirect('/user/' + req.cookies.username);
-})
-
-app.get('/submit-question', (req, res) => {
-    res.render('pages/submit-question');
-})
-
-app.post('/submit-question', (req, res) => {
-    const subject = req.body.subject;
-    const topic = req.body.topic;
-    const explain = req.body.explain;
-    const questionId = crypto.randomBytes(16).toString("hex");
-    const questions = questionsDB.state.questions;
-    console.log(questions)
-    questionsDB.get("questions")
-    .push(questionId)
-    questionsDB.set(questionId, {})
-    questionsDB.get(questionId)
-    .set("subject", subject)
-    .set("topic", topic)
-    .set("explain", explain)
-    .set("username", req.session.username)
-    questionsDB.save()
-    console.log(`${chalk.blue(req.session.username)} has submitted a question.\nQuestion subject: ${chalk.cyan(subject)}\nQuestion topic: ${chalk.magenta(topic)}\nIp: ${chalk.red(req.headers['x-forwarded-for'])}`);
-    res.redirect('/')
-})
-
 app.get('/feedback', (req, res) => {
-  if (!req.cookies.id) {
+  if (!req.session.username) {
     res.redirect('/');
   } else {
     res.render('pages/feedback');
@@ -180,10 +117,6 @@ app.post('/feedback', (req, res) => {
   });
 
   res.redirect('/')
-})
-
-app.get('/edit', (req, res) => {
-  res.render('pages/edit');
 })
 
 app.get('/dm/:id', (req, res) => {
@@ -214,11 +147,6 @@ io.on("connection", socket => {
     io.emit("recieve", message, id);
   })
 })
-/*
-edit.on("connection", socket => {
-  console.log("reached")
-})
-*/
 
 const PORT = process.env.PORT || 3000;
 
