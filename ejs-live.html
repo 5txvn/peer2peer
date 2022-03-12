@@ -1,0 +1,8 @@
+<script src="/scripts/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("reload", () => {
+          window.location.reload();
+        });
+    </script>

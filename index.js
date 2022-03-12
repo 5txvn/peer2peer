@@ -26,6 +26,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require('nodemailer');
 const chalk = require('chalk');
+const fs = require('fs');
 
 //stormdb stuff
 const StormDB = require("stormdb");
@@ -36,6 +37,7 @@ const questionsDB = new StormDB(questionsEngine);
 questionsDB.default({"questions": []})
 
 //for feedback emailing
+/*
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
@@ -45,31 +47,21 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAILPASS
   }
 });
+*/
 
 //routes and stuff
-app.use('/question', require('./routes/view-question'));
-app.use('/about', require('./routes/navbar/about'));
+app.use('/', require('./routes/home'));
+app.use('/question', require('./routes/view/view-question'));
+//app.use('/about', require('./routes/navbar/about'));
 app.use('/login', require('./routes/auth/login'));
 app.use('/signup', require('./routes/auth/signup'));
 app.use('/dashboard', require('./routes/basic/dashboard'));
 app.use('/submit-question', require('./routes/submit/submit-question.js'))
-
-app.get("/", (req, res) => {
-  if (!req.session.username) {
-    res.render("pages/landing");
-    const ip = req.headers['x-forwarded-for']
-    console.log(`An unregistered user has visited the landing page.\nIp: ${chalk.red(ip)}\n`);
-  } else {
-    res.render("index");
-    const ip = req.headers['x-forwarded-for']
-    const username = req.session.username
-    console.log(`${chalk.blue(username)} has connected to the main page.\nIp: ${chalk.red(ip)}\n`);
-  }
-});
-
-app.get('/landing', (req, res) => {
-  res.render('pages/landing');
-})
+app.use('/landing', require('./routes/basic/landing'));
+app.use('/feedback', require('./routes/submit/feedback'));
+//basic
+app.use('/about', require('./routes/basic/about'));
+//app.use('*', require('./routes/basic/404'));
 
 app.get("/user/:username", (req, res) => {
   console.log("reached");
@@ -89,14 +81,11 @@ app.get("/user/:username", (req, res) => {
   }
 });
 
-app.get('/feedback', (req, res) => {
-  if (!req.session.username) {
-    res.redirect('/');
-  } else {
-    res.render('pages/feedback');
-  }
+app.get('/profile', (req, res) => {
+  res.redirect(`/user/${req.session.username}`);
 })
 
+/*
 app.post('/feedback', (req, res) => {
   const problem = req.body.problem
   const elaborate = req.body.elaborate
@@ -118,14 +107,14 @@ app.post('/feedback', (req, res) => {
 
   res.redirect('/')
 })
+*/
 
 app.get('/dm/:id', (req, res) => {
   res.render('pages/dm')
 })
 
-app.get('*', (req, res) => {
-  res.status(404).render('pages/404');
-})
+//app.get('*', (req, res) => {res.status(404).render('pages/404')})
+
 
 io.on("connection", socket => {
   const questionIds = questionsDB.state.questions
@@ -140,14 +129,30 @@ io.on("connection", socket => {
   })
   const emit = questions
   socket.emit('questions', emit)
-  socket.emit("test", "test")
 
   socket.on("send", (message, id) => {
     console.log("reached")
     io.emit("recieve", message, id);
   })
+
+
+  /*
+    const filepath = 'index.ejs'
+
+    var data = fs.readFileSync(`./views/${filepath}`, "utf8");
+  setInterval(() => {
+    if (data != fs.readFileSync(`./views/${filepath}`, "utf8")) {
+      socket.emit("reload");
+      data = fs.readFileSync(`./views/${filepath}`, "utf8");
+    }
+  }, 100)
+  */
 })
 
-const PORT = process.env.PORT || 3000;
+//listen at port 3000
 
-server.listen(PORT);
+const PORT = process.env.PORT || 8080;
+
+server.listen(PORT, () => {
+  console.log("Server started")
+});

@@ -1,4 +1,3 @@
 {
-    "watch": ["/"],
     "ext": "js, html, css, ejs"
 }

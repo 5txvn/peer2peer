@@ -5,9 +5,14 @@ const StormDB = require("stormdb");
 const engine = new StormDB.localFileEngine("./db/questions.db");
 const db = new StormDB(engine);
 db.default({"questions": []})
+const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
+const logins = new StormDB(loginsEngine);
+
+const crypto = require("crypto");
 
 router.get('/', (req, res) => {
     res.render('pages/submit-question');
+    console.log(logins.state)
 })
 
 router.post('/', (req, res) => {
@@ -25,7 +30,10 @@ router.post('/', (req, res) => {
     .set("explain", explain)
     .set("username", req.session.username)
     db.save()
-    console.log(`${chalk.blue(req.session.username)} has submitted a question.\nQuestion subject: ${chalk.cyan(subject)}\nQuestion topic: ${chalk.magenta(topic)}\nIp: ${chalk.red(req.headers['x-forwarded-for'])}`);
+    logins.get(req.session.username)
+    .get("questions-asked")
+    .set(0)
+    logins.save()
     res.redirect('/')
 })
 

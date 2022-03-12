@@ -16,45 +16,91 @@
     />
     <link rel="icon" href="/assets/icon.png" type="image/x-icon" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="/css/main.css" rel="stylesheet" />
-    <script src="/scripts/socket.io.js"></script>
-    <script src="/js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!--<script src="/scripts/socket.io.js"></script>-->
+    <!--<script src="/js/script.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-expand-sm bg-primary navbar-dark nav">
-      <div class="container-fluid">
+    <nav class="navbar navbar-expand-sm bg-light navbar-light nav">
+      <div class="navbar-collapse collapse justify-content-center order-2">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <h3 style="margin-top:1.5px;color:white;" class="name">Peer2Peer</h3>
+            <a class="nav-link active" href="/" style="float:left;">🧍</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active"  style="margin-left:15px;" href="/">Home 🏠</a>
+            <a class="nav-link active"  style="margin-left:15px;" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/about">About 📄</a>
+            <a class="nav-link" href="/about">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/submit-question">Submit a question ❓</a>
+            <a class="nav-link" href="/submit-question">Submit Question</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/profile">Your Profile 👤</a>
+            <a class="nav-link" href="/dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/resources">Resources 📚</a>
+            <a class="nav-link" href="/resources">Resources</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/calculators">Calculators 🧮</a>
+            <a class="nav-link" href="/feedback">Feedback</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/explanations">Explanations 🗣️</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/feedback">Feedback 📧</a>
+            <a class="nav-link active" href="/" style="float:left;">🧍</a>
           </li>
         </ul>
       </div>
     </nav>
-    <div id="main"></div>
+    <div id="main">
+      <div class="question ui-widget-content">
+        <span><b>Subject:</b> </span>
+        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
+        <br>
+        <span style="float:right;">Feb 02 2022</span>
+        <br>
+        <span style="float:right;">12:00:50</span>
+        <span>Topic - Something else</span>
+        <br>
+        <span style="float:right;">20 questions answered</span>
+        <br>
+        <span style="float:right;">20 questions asked</span>
+        <span>Click <a href="https://youtube.com">here</a> to view question</span>
+      </div>
+    </div>
   </body>
+  <style>
+    .question {
+    margin-top:3%;
+    margin-left: 3%;
+    width: 50%;
+    border-radius:7.5px;
+    background-color: #ececec;
+    padding: 1%;
+}
+.navbar .navbar-nav {
+  float: none;
+  vertical-align: top;
+}
+
+.navbar .navbar-collapse {
+  text-align: center;
+}
+  </style>
+  <script>
+    $(function() {
+      $("#main").draggable();
+    });
+    $('#main').dblclick( function() {
+      $('#main').css({"top":"", "left":""});
+    });
+  </script>
+  <script src="/scripts/socket.io.js"></script>
+  <script>
+      const socket = io();
+
+      socket.on("reload", () => {
+        window.location.reload();
+      });
+  </script>
 </html>
