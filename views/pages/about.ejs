@@ -50,13 +50,24 @@
       </div>
     </nav>
     <div class="main">
-        <h5>Have you ever been frustrated when you don't know the answers to homework questions?</h5><br>
-        <h5>Are teachers not available to help you with your homework when you need it?</h5><br>
-        <h5>Do you hate reading textbooks or looking things up to be able to answer homework questions?</h5><br>
-        <h5>Do your potential homework habits of looking up answers to questions affect your class grades?</h5><br>
-        <h5>Do you feel like you learn better from fellow peers explaining things to you?</h5><br><br>
-        <h4>If you answered yes to any of these questions, then Peer2Peer is the thing for you!</h4>
-        <p>(rest of page is currently under construction)</p>
+      <h1>About the Site</h1><br>
+        <p>How long <b>should</b> you spend on your homework?</p>
+        <p>No, really, think about it for a second. How long should you be spending on your homework and learning for school in general. If you are a student, more likely than not, you would agree that homework takes a long amount of time for you to get done. Sometimes, it varies on the subject, and sometimes, it can even be more specific, like depending on the particular topic of a subject. Whatever it might be, it would be a pretty valid assumption to make if you said that homework just simply should not take as long as it currently does for you. This can be due to a variety of factors, but one thing is for certain, something can be done about it.</p>
+        <p>Enter <b>Peer2Peer</b>, our solution to all your homework-related problems. You might be asking to yourself, <i>"What is Peer2Peer, and how would it help me with my homework</i>." Good question, and we have the answer. Peer2Peer is practically built solely on the concept of student help to satisfy your learning needs and get you to know what you need to know for class, homework, or basically anything school-related. The idea of peer-to-peer learning is a really fascinating one and solves a lot of problems you might face through school in our modern days, such as the inability to contact teachers at some times, or simply the fact that fellow peers can explain topics even better than teachers ever can. It all boils down to the convenience and the style of learning. In the end, the main objective of Peer2Peer is to <u>bring students together</u>.</p>
+        <h1>Site Stats</h1>
+        <h3>Current Version - <span style="color:#00ff00">v1.0.0</span></h3>
+        <h1>Credits</h1>
+        <h3>Lead Coder: Steven Livingston</h3>
+        <h3>Design: Hayden Gaunt (design critiques), Steven Livingston (design implementation)</h3>
+        <h3>Bug Tester: Yusuf Shabazz</h3>
+        <h3>Idea: Hayden Gaunt, Pratik Paduri, Steven Livingston, William McFarlin</h3>
     </div>
   </body>
 </html>
+<script src="/scripts/socket.io.js"></script>
+<script>
+  const socket = io()
+  socket.on("reload", () => {
+      window.location.reload()
+  })
+</script>
