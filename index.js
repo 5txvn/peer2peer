@@ -34,7 +34,10 @@ const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
 const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
 const questionsDB = new StormDB(questionsEngine);
+const messagesEngine = new StormDB.localFileEngine("./db/messages.db");
+const messagesDB = new StormDB(messagesEngine);
 questionsDB.default({"questions": []})
+messagesDB.default({"messages": []})
 
 //for feedback emailing
 /*
@@ -113,7 +116,9 @@ app.get('/dm/:id', (req, res) => {
   res.render('pages/dm')
 })
 
-//app.get('*', (req, res) => {res.status(404).render('pages/404')})
+app.get('/main', (req, res) => {
+  res.render('pages/main-room')
+})
 
 
 io.on("connection", socket => {
@@ -127,13 +132,21 @@ io.on("connection", socket => {
       id: questionIds[num]
     })
   })
-  const emit = questions
-  socket.emit('questions', emit)
+  //const emit = questions
+  //socket.emit('questions', emit)
+  socket.on('message', data => {
+    messagesDB.get("messages").push(data)
+    messagesDB.save()
+    io.emit("recieve", data)
+    console.log(data)
+  })
 
   socket.on("send", (message, id) => {
     console.log("reached")
     io.emit("recieve", message, id);
   })
+
+  socket.emit("messages", messagesDB.state.messages)
 
 
   /*

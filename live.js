@@ -5,8 +5,8 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const fs = require('fs')
 
-const file = "./views/pages/about.ejs"
-const ejsPath = 'pages/about.ejs'
+const file = "./views/pages/main-room.ejs"
+const ejsPath = 'pages/main-room.ejs'
 
 app.get('/', (req, res) => {
     res.render(ejsPath)

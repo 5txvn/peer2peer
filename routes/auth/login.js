@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const chalk = require("chalk");
 
 const StormDB = require("stormdb");
+const { append } = require("express/lib/response");
 const dbEngine = new StormDB.localFileEngine("./db/logins.db");
 const db = new StormDB(dbEngine);
 db.default({"questions": []})
@@ -26,6 +27,7 @@ router.post("/", (req, res) => {
     req.session.username = username;
     req.session.email = data.email;
     req.session.name = data.name;
+    res.cookie("username", username)
     res.redirect("/");
     console.log(
       `${chalk.blue(username)} has logged in.\nIp: ${chalk.red(
