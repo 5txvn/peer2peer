@@ -5,8 +5,8 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const fs = require('fs')
 
-const file = "./views/pages/main-room.ejs"
-const ejsPath = 'pages/main-room.ejs'
+const file = "./views/index.ejs"
+const ejsPath = 'index.ejs'
 
 app.get('/', (req, res) => {
     res.render(ejsPath)
@@ -32,8 +32,10 @@ server.listen(PORT, () => {
 
 /*
 <script src="/scripts/socket.io.js"></script>
+<script>
 const socket = io()
 socket.on("reload", () => {
     window.location.reload()
 })
+</script>
 */

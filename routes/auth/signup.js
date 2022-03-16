@@ -29,6 +29,7 @@ router.post("/", (req, res) => {
         .set("password", hash)
         .set("name", name)
         .set("questions-asked", 0)
+        .set("questions-answered", 0)
         .save();
     } else {
       res.redirect("/signup");

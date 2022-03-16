@@ -32,11 +32,9 @@ const fs = require('fs');
 const StormDB = require("stormdb");
 const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
-const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
-const questionsDB = new StormDB(questionsEngine);
 const messagesEngine = new StormDB.localFileEngine("./db/messages.db");
 const messagesDB = new StormDB(messagesEngine);
-questionsDB.default({"questions": []})
+//questionsDB.default({"questions": []})
 messagesDB.default({"messages": []})
 
 //for feedback emailing
@@ -120,8 +118,15 @@ app.get('/main', (req, res) => {
   res.render('pages/main-room')
 })
 
+app.get('/filter/:word', (req, res) => {
+  res.render('pages/filter')
+})
+
 
 io.on("connection", socket => {
+  
+  const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
+const questionsDB = new StormDB(questionsEngine);
   const questionIds = questionsDB.state.questions
   var questions = [];
   questionIds.forEach((question, num) => {
@@ -129,11 +134,15 @@ io.on("connection", socket => {
       subject: questionsDB.state[question].subject,
       topic: questionsDB.state[question].topic,
       username: questionsDB.state[question].username,
+      time: questionsDB.state[question].time,
+      date: questionsDB.state[question].date,
       id: questionIds[num]
     })
   })
+  
   //const emit = questions
-  //socket.emit('questions', emit)
+  
+  socket.emit('questions', questions)
   socket.on('message', data => {
     messagesDB.get("messages").push(data)
     messagesDB.save()
@@ -141,15 +150,60 @@ io.on("connection", socket => {
     console.log(data)
   })
 
-  socket.on("send", (message, id) => {
+  socket.on("send", (message, name, id) => {
     console.log("reached")
-    io.emit("recieve", message, id);
+    io.emit("recieve", message, name, id);
   })
 
+socket.on("question-responses", (questionId) => {
+  socket.emit("recieve-responses", questionsDB.state[questionId].responses)
+})
+
   socket.emit("messages", messagesDB.state.messages)
+  console.log("Recieved filter request")
+  socket.on("filter", (word) => {
+    var questions = []
+    console.log(word)
+    var count = 0
+    Object.entries(questionsDB.state).forEach((id, data) => {
+      if (count != 0) {
+        
+        if (id[1].topic.includes(word)) {
+          id[1].url = `/question/${id[0]}`
+          questions.push(id[1])
+        }
+        
+        
+        
+       /*
+        console.log(0)
+        console.log(id[0])
+        console.log(1)
+        var chingchong = id[1]
+        console.log(chingchong.topic)
+        console.log(count)
+        */
+        
+      }
+      /*
+      console.log(0)
+      console.log(id[0])
+      console.log(1)
+      var chingchong = id[1]
+      console.log(chingchong.topic)
+      console.log(count)
+      */
+      
+      count += 1
+    })
+    console.log(questions)
+    socket.emit(`filter-${word}`, questions)
+    console.log("Sent filter request back")
+  })
+  
 
 
-  /*
+  
     const filepath = 'index.ejs'
 
     var data = fs.readFileSync(`./views/${filepath}`, "utf8");
@@ -159,7 +213,7 @@ io.on("connection", socket => {
       data = fs.readFileSync(`./views/${filepath}`, "utf8");
     }
   }, 100)
-  */
+  
 })
 
 //listen at port 3000

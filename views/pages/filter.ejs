@@ -20,7 +20,6 @@
     <!--<script src="/js/script.js"></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/solid.css">
   </head>
   <body>
     <nav class="navbar navbar-expand-sm bg-light navbar-light nav">
@@ -53,30 +52,8 @@
         </ul>
       </div>
     </nav>
-    <div style="text-align:center;">
-    <input type="text" class="search" id="search" placeholder="🔎  Start Typing...">
-    </div>
-    <span id="redirect"></span>
     <div id="main">
-      <div class="side">
-        <h1 style="text-align:center;">Notifications</h1>
-        <ul>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-        </ul>
-      </div>
+      <!--
       <div class="question ui-widget-content">
         <span><b>Subject:</b> </span>
         <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
@@ -91,34 +68,7 @@
         <span style="float:right;">20 questions asked</span>
         <span>Click <a href="https://youtube.com">here</a> to view question</span>
       </div>
-      <div class="question ui-widget-content">
-        <span><b>Subject:</b> </span>
-        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
-        <br>
-        <span style="float:right;">Feb 02 2022</span>
-        <br>
-        <span style="float:right;">12:00:50</span>
-        <span>Topic - Something else</span>
-        <br>
-        <span style="float:right;">20 questions answered</span>
-        <br>
-        <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="https://youtube.com">here</a> to view question</span>
-      </div>
-      <div class="question ui-widget-content">
-        <span><b>Subject:</b> </span>
-        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
-        <br>
-        <span style="float:right;">Feb 02 2022</span>
-        <br>
-        <span style="float:right;">12:00:50</span>
-        <span>Topic - Something else</span>
-        <br>
-        <span style="float:right;">20 questions answered</span>
-        <br>
-        <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="https://youtube.com">here</a> to view question</span>
-      </div>
+    -->
     </div>
   </body>
   <style>
@@ -130,15 +80,6 @@
     background-color: #ececec;
     padding: 1%;
 }
-
-.side {
-  float: right;
-  background-color: #ececec;
-  width: 25%;
-  margin-right: 3%;
-  border-radius:7.5px;
-}
-
 .navbar .navbar-nav {
   float: none;
   vertical-align: top;
@@ -147,18 +88,6 @@
 .navbar .navbar-collapse {
   text-align: center;
 }
-
-.search {
-  border-radius: 10px;
-  border-color: gray;
-  border-width: 1px;
-  border-style: solid;
-  height: 40px;
-  width: 50%;
-  margin-top: 5%;
-  font-size: 24px;
-  padding-left: 20px;
-}
   </style>
   <script>
   </script>
@@ -166,21 +95,26 @@
   <script>
       const socket = io();
 
+      const searchWord = location.pathname.match(/[^\/]+$/)[0]
+
+      console.log(searchWord)
+
+      socket.emit("filter", searchWord)
+
       socket.on("reload", () => {
         window.location.reload();
       });
 
-
-socket.on("questions", questions => {
+socket.on(`filter-${searchWord}`, questions => {
     console.log(questions);
     
     questions.reverse().forEach(question => {
         const username = question.username.replace(/</g, "&lt;").replace(/>/g, "&gt;")
         const subject = question.subject.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const topic = question.topic.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        const topic = question.topic.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(searchWord, `<span class="text-danger">${searchWord}</span>`)
         const time = question.time.replace(/</g, "&lt;").replace(/>/g, "&gt;")
         const date = question.date.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        const url = `/question/${question.id.replace(/</g, "&lt;").replace(/>/g, "&gt;")}`
+        //const url = `/question/${question.id.replace(/</g, "&lt;").replace(/>/g, "&gt;")}`
         document.getElementById("main").innerHTML += `
         <div class="question ui-widget-content" id="question">
         <span><b>Subject:</b> ${subject}</span>
@@ -194,8 +128,9 @@ socket.on("questions", questions => {
         <span style="float:right;">20 questions answered</span>
         <br>
         <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="${url}">here</a> to view question</span>
+        <span>Click <a href="https://youtube.com">here</a> to view question</span>
       </div>
+    </div>
         `
     })
     
@@ -207,12 +142,5 @@ $(function() {
     $('#question').dblclick( function() {
       $('#question').css({"top":"", "left":""});
     });
-    const input = document.getElementById("search")
-    input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    const filter = document.getElementById("search").value;
-    window.location.href = `/filter/${filter}`
-  }
-});
   </script>
 </html>

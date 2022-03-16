@@ -2,6 +2,7 @@
 <html>
   <head>
     <script src="/scripts/socket.io.js"></script>
+    <script src="/scripts/platform.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Minichat</title>
     <meta charset="utf-8" />
@@ -12,18 +13,6 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="icon" href="/assets/icon.png" type="image/x-icon" />
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
-          }
-        });
-      </script>
-          
-      <script type="text/javascript"
-              src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-      </script>
   </head>
   <body>
     <nav class="navbar navbar-expand-sm bg-light navbar-light nav">
@@ -101,7 +90,7 @@
     sendMessage();
   }
 });
-const scrollDown = () => (messages.scrollTop = messages.scrollHeight);
+const scrollDown = () => document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
 
       const socket = io();
 
@@ -111,7 +100,16 @@ const scrollDown = () => (messages.scrollTop = messages.scrollHeight);
         return prev;
       }, {});
 
+      const resetInput = () => {
+        $("#message").val("");
+        scrollDown()
+      }
+
+      const msg = (string) => $("#messages").append(string);
+
       socket.on("recieve", (data) => {
+        data[0] = data[0].replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        data[1] = data[1].replace(/</g, "&lt;").replace(/>/g, "&gt;");
           $("#messages").append(`<p>${data[0]}: ${data[1]}</p>`);
           console.log("test")
           scrollDown();
@@ -119,17 +117,144 @@ const scrollDown = () => (messages.scrollTop = messages.scrollHeight);
 
       function sendMessage() {
           const message = $("#message").val();
-          socket.emit('message', [cookie.username, message]);
-          //console.log([cookie.username, message]);
-          $("#message").val("");
+          switch(message) {
+            //peer2peer version
+            case "/version":
+              msg(`<p>Server: You are currently running Peer2Peer version 1.0.0</p>`);
+              resetInput()
+              break;
+            case "/help":
+              msg(`<p>Server: Coming soon.</p>`)
+              resetInput()
+              break;
+            case "/clear":
+              $("#messages").empty();
+              msg(`<p>Server: Chat cleared.</p>`)
+              resetInput()
+              break;
+            case "/reload":
+              window.location.reload();
+              resetInput()
+              break;
+            case "/exit":
+              window.location.href = "/";
+              resetInput()
+              break;
+            //site pages
+            case "/about":
+              window.location.href = "/about";
+              break;
+            case "/submit-question":
+              window.location.href = "/submit-question";
+              break;
+            case "/dashboard":
+              window.location.href = "/dashboard";
+              break;
+            case "/resources":
+              window.location.href = "/resources";
+              break;
+            case "/feedback":
+              window.location.href = "/feedback";
+              break;
+            //os info ig
+            case "/os"
+            //page shortcuts
+            case "/clever":
+              window.location.href = "https://clever.com/";
+              resetInput()
+              break;
+            case "/khan-academy":
+            case "/khanacademy":
+              window.location.href = "https://www.khanacademy.org/";
+              resetInput()
+              break;
+            case "/openstax":
+              window.location.href = "https://openstax.org/";
+              resetInput()
+              break;
+            case "/drive":
+            case "/google-drive":
+            case "/googledrive":
+              window.location.href = "https://drive.google.com/drive/my-drive";
+              resetInput()
+              break;
+            case "/docs":
+            case "/google-docs":
+            case "/googledocs":
+              window.location.href = "https://docs.google.com/";
+              resetInput()
+              break;
+            case "/slides":
+            case "/google-slides":
+            case "/googleslides":
+              window.location.href = "https://docs.google.com/presentation/";
+              resetInput()
+              break;
+            case "/sheets":
+            case "/google-sheets":
+            case "/googlesheets":
+              window.location.href = "https://docs.google.com/spreadsheets/";
+              resetInput()
+              break;
+            case "/quizlet":
+              window.location.href = "https://quizlet.com/";
+              resetInput()
+              break;
+            case "/quizizz":
+              window.location.href = "https://quizizz.com/";
+              resetInput()
+              break;
+            case "/kahoot":
+              window.location.href = "https://kahoot.com/";
+              resetInput()
+              break;
+            case "/plickers":
+              window.location.href = "https://plickers.com/";
+              resetInput()
+              break;
+            case "/mathway":
+              window.location.href = "https://mathway.com/";
+              resetInput()
+              break;
+            case "/desmos":
+              window.location.href = "https://www.desmos.com/";
+              resetInput()
+              break;
+            case "/omni-calculator":
+            case "/omnicalculator":
+              window.location.href = "https://www.omnicalculator.com/";
+              resetInput()
+              break;
+            case "/calculator-soup":
+            case "/calculatorsoup":
+              window.location.href = "https://www.calculatorsoup.com/";
+              resetInput()
+              break;
+            case "/grammarly":
+              window.location.href = "https://www.grammarly.com/";
+              resetInput()
+              break;
+            case "/flocabulary":
+              window.location.href = "https://www.flocabulary.com/";
+              resetInput()
+              break;
+            case "/stack-overflow":
+            case "/stackoverflow":
+              window.location.href = "https://stackoverflow.com/";
+              resetInput()
+              break;
+            default:
+            socket.emit('message', [cookie.username, message]);
+            $("#message").val("");
+          }
       }
 
       socket.on("messages", (data) => {
           data.forEach(message => {
                 $("#messages").append(`<p>${message[0]}: ${message[1]}</p>`);
-                scrollDown()
           })
-          scrollDown()
+          scrollDown();
+          $("#messages").append(``)
       })
   </script>
 </html>
