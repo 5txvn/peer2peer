@@ -39,6 +39,9 @@
             <a class="nav-link" href="/submit-question">Submit Question</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/main">Main Chatroom</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
@@ -54,70 +57,20 @@
       </div>
     </nav>
     <div style="text-align:center;">
-    <input type="text" class="search" id="search" placeholder="🔎  Start Typing...">
+    <input type="text" class="search" id="search" placeholder="🔎  Start Typing..." autocomplete="off">
     </div>
     <span id="redirect"></span>
     <div id="main">
       <div class="side">
-        <h1 style="text-align:center;">Notifications</h1>
-        <ul>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-          <li>Nathan started a chat with you</li>
-          <li>Jonathan sent you a chat</li>
-        </ul>
-      </div>
-      <div class="question ui-widget-content">
-        <span><b>Subject:</b> </span>
-        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
-        <br>
-        <span style="float:right;">Feb 02 2022</span>
-        <br>
-        <span style="float:right;">12:00:50</span>
-        <span>Topic - Something else</span>
-        <br>
-        <span style="float:right;">20 questions answered</span>
-        <br>
-        <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="https://youtube.com">here</a> to view question</span>
-      </div>
-      <div class="question ui-widget-content">
-        <span><b>Subject:</b> </span>
-        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
-        <br>
-        <span style="float:right;">Feb 02 2022</span>
-        <br>
-        <span style="float:right;">12:00:50</span>
-        <span>Topic - Something else</span>
-        <br>
-        <span style="float:right;">20 questions answered</span>
-        <br>
-        <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="https://youtube.com">here</a> to view question</span>
-      </div>
-      <div class="question ui-widget-content">
-        <span><b>Subject:</b> </span>
-        <span style="float:right;"><a class="text-info" href="/profile" style="text-decoration:none;">Stevanoiskool</a></span>
-        <br>
-        <span style="float:right;">Feb 02 2022</span>
-        <br>
-        <span style="float:right;">12:00:50</span>
-        <span>Topic - Something else</span>
-        <br>
-        <span style="float:right;">20 questions answered</span>
-        <br>
-        <span style="float:right;">20 questions asked</span>
-        <span>Click <a href="https://youtube.com">here</a> to view question</span>
+        <h1 style="text-align:center;">Start DM</h1>
+        <form action="/start-dm" method="POST" id="start-dm">
+          <input type="hidden" name="clientusername" value="<%-clientusername%>">
+        <input placeholder="Enter User..." id="dm" type="text" class="dm" autocomplete="off" name="username">
+        </form>
+        <h1 style="text-align:center;" id="notifications-header">Notifications</h1>
+        <ul id="notifications"></ul>
+        <h1 style="text-align:center;" id="dms-header">DMs</h1>
+        <ul id="dms"></ul>
       </div>
     </div>
   </body>
@@ -158,6 +111,21 @@
   margin-top: 5%;
   font-size: 24px;
   padding-left: 20px;
+  margin-bottom: 3%;
+}
+.dm {
+  border-radius: 10px;
+  border-color: gray;
+  border-width: 1px;
+  border-style: solid;
+  height: 40px;
+  width: 90%;
+  margin-top: 2%;
+  font-size: 24px;
+  padding-left: 20px;
+  margin-bottom: 3%;
+  margin-left:5%;
+  margin-right:5%;
 }
   </style>
   <script>
@@ -169,6 +137,13 @@
       socket.on("reload", () => {
         window.location.reload();
       });
+
+      $("#search").hide()
+      $("#search").slideDown(1000)
+      $('.navbar').hide()
+      $('.navbar').slideDown(1000)
+      $("#main").hide()
+      $("#main").fadeIn(1000)
 
 
 socket.on("questions", questions => {
@@ -202,10 +177,10 @@ socket.on("questions", questions => {
 })
 
 $(function() {
-      $("#question").draggable();
+      $(".question").draggable();
     });
-    $('#question').dblclick( function() {
-      $('#question').css({"top":"", "left":""});
+    $('.question').dblclick( function() {
+      $('.question').css({"top":"", "left":""});
     });
     const input = document.getElementById("search")
     input.addEventListener("keydown", (event) => {
@@ -214,5 +189,28 @@ $(function() {
     window.location.href = `/filter/${filter}`
   }
 });
+
+const cookie = document.cookie.split("; ").reduce((prev, current) => {
+        const [name, ...value] = current.split("=");
+        prev[name] = value.join("=");
+        return prev;
+      }, {});
+
+socket.emit("notification-request", cookie.username)
+socket.emit("dm-request", cookie.username)
+socket.on(`notification-response-${cookie.username}`, (data) => {
+  const notifications = data.reverse()
+  console.log(notifications)
+  console.log(data)
+  notifications.forEach(notification => {
+    $("#notifications").append(`<li style="margin-left:5%;margin-right:5%;">${notification[0]}</li>`)
+  })
+})
+socket.on(`dm-response-${cookie.username}`, (data) => {
+  const dms = data.reverse()
+  dms.forEach(dm => {
+    $("#dms").append(`<li style="margin-left:5%;margin-right:5%;">${dm[0]}</li>`)
+  })
+})
   </script>
 </html>

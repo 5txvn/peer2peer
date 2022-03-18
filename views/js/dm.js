@@ -11,6 +11,12 @@ const socket = io();
               send();
             }
           });
+          socket.emit('recieve-messages', windowId)
+          socket.on(`dm-messages-${windowId}`, messages => {
+            messages.forEach(message => {
+              $("#messages").append(`<p>${message[0]} : ${message[1]}</p>`)
+            })
+          })
     socket.on("recieve", (message, name, id) => {
         if (windowId == id) {
             console.log(message)

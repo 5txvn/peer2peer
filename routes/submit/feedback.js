@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const nodemailer = require('nodemailer')
+
 router.get('/', (req, res) => {
     res.render('pages/feedback')
 })
@@ -8,6 +10,16 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     const problem = req.body.problem
   const elaborate = req.body.elaborate
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'stevanosprojects@gmail.com',
+      pass: process.env.EMAILPASS
+    }
+  });
   
   var mailOptions = {
     from: 'stevanosprojects@gmail.com',

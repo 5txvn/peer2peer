@@ -5,7 +5,9 @@ router.get('/', (req, res) => {
     if (!req.session.username) {
       res.render('pages/landing')
       } else {
-        res.render("index");
+        res.render("index", {
+          clientusername: req.session.username
+        });
       }
 })
 

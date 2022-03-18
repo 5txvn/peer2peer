@@ -24,14 +24,12 @@ const io = require("socket.io")(server);
 //other modules
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-const nodemailer = require('nodemailer');
+//const nodemailer = require('nodemailer');
 const chalk = require('chalk');
 const fs = require('fs');
 
 //stormdb stuff
 const StormDB = require("stormdb");
-const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
-const logins = new StormDB(loginsEngine);
 const messagesEngine = new StormDB.localFileEngine("./db/messages.db");
 const messagesDB = new StormDB(messagesEngine);
 //questionsDB.default({"questions": []})
@@ -60,9 +58,23 @@ app.use('/dashboard', require('./routes/basic/dashboard'));
 app.use('/submit-question', require('./routes/submit/submit-question.js'))
 app.use('/landing', require('./routes/basic/landing'));
 app.use('/feedback', require('./routes/submit/feedback'));
+app.use('/user', require('./routes/view/view-profile.js'))
 //basic
 app.use('/about', require('./routes/basic/about'));
 //app.use('*', require('./routes/basic/404'));
+
+app.post('/start-dm', (req, res) => {
+  const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
+const logins = new StormDB(loginsEngine);
+const id = crypto.randomBytes(32).toString('hex');
+logins.get(req.body.clientusername).get("notifications").push([`<a class="text-info" href="/dm/${id}">${req.body.username}</a> has started a direct message conversation with you.`, id]).save()
+logins.get(req.body.clientusername).get("dms").push([req.body.username, id]).save()
+  //const clientusername = req.body.clientusername
+  //const name = req.body.username
+  console.log(req.body)
+
+  //
+})
 
 app.get("/user/:username", (req, res) => {
   console.log("reached");
@@ -127,6 +139,11 @@ io.on("connection", socket => {
   
   const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
 const questionsDB = new StormDB(questionsEngine);
+const dmEngine = new StormDB.localFileEngine("./db/dms.db");
+const dmDB = new StormDB(dmEngine);
+//dmDB.default({"ids": []})
+const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
+const logins = new StormDB(loginsEngine);
   const questionIds = questionsDB.state.questions
   var questions = [];
   questionIds.forEach((question, num) => {
@@ -152,11 +169,37 @@ const questionsDB = new StormDB(questionsEngine);
 
   socket.on("send", (message, name, id) => {
     console.log("reached")
+    
+    if (dmDB.state.ids.includes(id)) {
+      dmDB.get(id).push([name, message]).save()
+    } else {
+      dmDB.get("ids").push(id).save()
+      dmDB.set(id, []).get(id).push([name, message]).save()
+    }
+    
+   console.log(dmDB.state)
     io.emit("recieve", message, name, id);
+  })
+
+  socket.on("recieve-messages", id => {
+    if (dmDB.state.ids.includes(id)) {
+      socket.emit(`dm-messages-${id}`, dmDB.state[id])
+    } else {
+      socket.emit(`dm-messages-${id}`, [])
+    }
   })
 
 socket.on("question-responses", (questionId) => {
   socket.emit("recieve-responses", questionsDB.state[questionId].responses)
+})
+
+socket.on("notification-request", (data) => {
+  socket.emit(`notification-response-${data}`, logins.state[data].notifications)
+  console.log(data)
+})
+
+socket.on("dm-request", (data) => {
+  socket.emit(`dm-response-${data}`, logins.state[data].dms)
 })
 
   socket.emit("messages", messagesDB.state.messages)

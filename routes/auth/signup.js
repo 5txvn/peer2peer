@@ -30,6 +30,8 @@ router.post("/", (req, res) => {
         .set("name", name)
         .set("questions-asked", 0)
         .set("questions-answered", 0)
+        .set("notifications", [])
+        .set("dms", [])
         .save();
     } else {
       res.redirect("/signup");
