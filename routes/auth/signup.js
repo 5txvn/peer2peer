@@ -17,19 +17,19 @@ router.post("/", (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, salt);
     const usernames = Object.keys(db);
     const username = req.body.username;
-    const name = req.body.name;
+    res.cookie("username", username)
     //set user data in sessions
     req.session.username = username
-    req.session.name = name
     if (!usernames.includes(username)) {
       //set the login data
       db
         .set(username, {})
         .get(username)
         .set("password", hash)
-        .set("name", name)
         .set("questions-asked", 0)
         .set("questions-answered", 0)
+        .set("description", "No description yet (coming soon...)")
+        .set("grade-level", "No grade level yet (coming soon...)")
         .set("notifications", [])
         .set("dms", [])
         .save();

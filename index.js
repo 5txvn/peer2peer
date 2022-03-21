@@ -61,19 +61,21 @@ app.use('/feedback', require('./routes/submit/feedback'));
 app.use('/user', require('./routes/view/view-profile.js'))
 //basic
 app.use('/about', require('./routes/basic/about'));
-//app.use('*', require('./routes/basic/404'));
 
 app.post('/start-dm', (req, res) => {
   const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
-const id = crypto.randomBytes(32).toString('hex');
-logins.get(req.body.clientusername).get("notifications").push([`<a class="text-info" href="/dm/${id}">${req.body.username}</a> has started a direct message conversation with you.`, id]).save()
+const id = crypto.randomBytes(8).toString('hex');
+logins.get(req.body.username).get("notifications").push([`<a style="color:white;font-weight:bold;text-decoration:none;" href="/dm/${id}">${req.body.clientusername}</a> has started a direct message conversation with you.`, id]).save()
+logins.get(req.body.username).get("dms").push([req.body.clientusername, id]).save()
 logins.get(req.body.clientusername).get("dms").push([req.body.username, id]).save()
-  //const clientusername = req.body.clientusername
-  //const name = req.body.username
-  console.log(req.body)
+  res.redirect('/')
 
   //
+})
+
+app.get('/resources', (req, res) => {
+  res.render('pages/resources')
 })
 
 app.get("/user/:username", (req, res) => {
@@ -98,30 +100,6 @@ app.get('/profile', (req, res) => {
   res.redirect(`/user/${req.session.username}`);
 })
 
-/*
-app.post('/feedback', (req, res) => {
-  const problem = req.body.problem
-  const elaborate = req.body.elaborate
-  
-  var mailOptions = {
-    from: 'stevanosprojects@gmail.com',
-    to: 'therealenny1@gmail.com',
-    subject: 'Feedback from Peer2Peer',
-    html: `<h2>${problem}</h2><p>${elaborate}</p>`
-  };
-  
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
-
-  res.redirect('/')
-})
-*/
-
 app.get('/dm/:id', (req, res) => {
   res.render('pages/dm')
 })
@@ -134,32 +112,39 @@ app.get('/filter/:word', (req, res) => {
   res.render('pages/filter')
 })
 
+app.get('/profile', (req, res) => {
+  res.render('pages/profile')
+})
+
 
 io.on("connection", socket => {
   
   const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
 const questionsDB = new StormDB(questionsEngine);
+questionsDB.default({"questions": []})
 const dmEngine = new StormDB.localFileEngine("./db/dms.db");
 const dmDB = new StormDB(dmEngine);
 //dmDB.default({"ids": []})
 const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
 const logins = new StormDB(loginsEngine);
+var questions = []
   const questionIds = questionsDB.state.questions
-  var questions = [];
   questionIds.forEach((question, num) => {
+    console.log(logins.state[questionsDB.state[question].username]['questions-asked'])
     questions.push({
       subject: questionsDB.state[question].subject,
       topic: questionsDB.state[question].topic,
       username: questionsDB.state[question].username,
+      questionsAsked: logins.state[questionsDB.state[question].username]['questions-asked'],
+      questionsAnswered: logins.state[questionsDB.state[question].username]['questions-answered'],
       time: questionsDB.state[question].time,
       date: questionsDB.state[question].date,
       id: questionIds[num]
     })
   })
+  socket.emit('questions', questions)
   
   //const emit = questions
-  
-  socket.emit('questions', questions)
   socket.on('message', data => {
     messagesDB.get("messages").push(data)
     messagesDB.save()
@@ -201,9 +186,9 @@ socket.on("notification-request", (data) => {
 socket.on("dm-request", (data) => {
   socket.emit(`dm-response-${data}`, logins.state[data].dms)
 })
-
+socket.on("get-messages", () => {
   socket.emit("messages", messagesDB.state.messages)
-  console.log("Recieved filter request")
+})
   socket.on("filter", (word) => {
     var questions = []
     console.log(word)
@@ -215,54 +200,15 @@ socket.on("dm-request", (data) => {
           id[1].url = `/question/${id[0]}`
           questions.push(id[1])
         }
-        
-        
-        
-       /*
-        console.log(0)
-        console.log(id[0])
-        console.log(1)
-        var chingchong = id[1]
-        console.log(chingchong.topic)
-        console.log(count)
-        */
-        
       }
-      /*
-      console.log(0)
-      console.log(id[0])
-      console.log(1)
-      var chingchong = id[1]
-      console.log(chingchong.topic)
-      console.log(count)
-      */
-      
       count += 1
     })
     console.log(questions)
     socket.emit(`filter-${word}`, questions)
-    console.log("Sent filter request back")
   })
-  
-
-
-  
-    const filepath = 'index.ejs'
-
-    var data = fs.readFileSync(`./views/${filepath}`, "utf8");
-  setInterval(() => {
-    if (data != fs.readFileSync(`./views/${filepath}`, "utf8")) {
-      socket.emit("reload");
-      data = fs.readFileSync(`./views/${filepath}`, "utf8");
-    }
-  }, 100)
-  
 })
-
-//listen at port 3000
-
+app.use('*', require('./routes/basic/404'));
 const PORT = process.env.PORT || 8080;
-
 server.listen(PORT, () => {
   console.log("Server started")
 });

@@ -5,11 +5,17 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const fs = require('fs')
 
-const file = "./views/index.ejs"
-const ejsPath = 'index.ejs'
+const file = "./views/pages/resources.ejs"
+const ejsPath = 'pages/resources.ejs'
 
 app.get('/', (req, res) => {
-    res.render(ejsPath)
+    res.render(ejsPath, {
+        username: "stevanoiskool",
+        questionsAsked: "10",
+        questionsAnswered: "5",
+        u: "stevanoiskool",
+        t: "10"
+    })
 })
 
 io.on("connection", (socket) => {

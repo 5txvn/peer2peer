@@ -36,7 +36,7 @@
       <div class="navbar-collapse collapse justify-content-center order-2">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active"  style="margin-left:15px;" href="/">Home</a>
+            <a class="nav-link"  style="margin-left:15px;" href="/">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/about">About</a>
@@ -58,17 +58,17 @@
     </nav>
     <div class="main">
         <div class="center"><h1>View Question</h1></div>
-        <h3>Username: <%-username%></h3>
-        <h3>Subject: <%-subject%></h3>
-        <h3>Topic: <%-topic%></h3>
-        <h3>Explanation: <%-explanation%></h3>
+        <h3>Username: Stevanoiskool</h3>
+        <h3>Subject: Math</h3>
+        <h3>Topic: How to solve quadratics</h3>
+        <h3>Explanation: How can I solve this quadratic equation?</h3>
         <br><hr><br>
-        <form action="/question/<%-id%>" method="POST">
+        <form action="/question/Balls" method="POST">
             <input placeholder="📝 Submit Response" autocomplete="off" type="text" style="width:25%;" name="response"><br><br><input type="submit" value="Submit Response" class="btn">
         </form>
         <br><hr>
         <br><h1>Responses</h1><br>
-        <span id="responses"></span>
+        <span id="responses"><p>Test: test message</p></span>
     </div>
   </body>
   <style>
@@ -86,12 +86,12 @@ h3 {
     width: fit-content;
 }
 .btn {
-    background-color:#2ec4b6;
+    background-color:#ffbf69;
     color:white;
     border-radius:10px;
 }
 h1 {
-    background-color: #00ce6b;
+    background-color: #ff9f1c;
     padding:4px;
     border-radius:15px;
     display:inline-block;
@@ -111,9 +111,9 @@ input:focus {
     outline:none;
 }
 p {
-    background-color: #32cd32;
+    background-color: #2ec4b6;
   padding: 4px;
-  border-radius: 10px 10px 10px 0px;
+  border-radius: 20px 20px 20px 0px;
   width: fit-content;
 }
 hr {
@@ -129,7 +129,7 @@ socket.on("reload", () => {
 const questionId = location.pathname.match(/[^\/]+$/)[0]
 socket.emit(`question-responses`, questionId)
 socket.on("recieve-responses", data => {
-  data.reverse().forEach(message => {
+  data.forEach(message => {
     $("#responses").append(`<p><b>${message[0]}</b>: ${message[1]}</p>`)
   })
 })

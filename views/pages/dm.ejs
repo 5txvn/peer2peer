@@ -2,7 +2,6 @@
 <html>
   <head>
     <script src="/scripts/socket.io.js"></script>
-    <link rel="stylesheet" href="/css/dm.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Minichat</title>
     <meta charset="utf-8" />
@@ -15,39 +14,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body class="body">
-    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-        <div class="container-fluid">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <h3 style="margin-top:1.5px;color:white;">Peer2Peer</h3>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"  style="margin-left:15px;" href="#">Home 🏠</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/about">About 📄</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/submit-question">Submit a question ❓</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/profile">Your Profile 👤</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/resources">Resources 📚</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/profile">Calculators 🧮</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/profile">Explanations 🗣️</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/feedback">Feedback 📧</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <nav class="navbar navbar-expand-sm navbar-dark nav">
+      <div class="navbar-collapse collapse justify-content-center order-2">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link"  style="margin-left:15px;" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/submit-question">Submit Question</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/main">Main Chatroom</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/profile">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/resources">Resources</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/feedback">Feedback</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
     <div id="messages"></div>
     <div class="form">
       <input
@@ -60,5 +53,51 @@
       />
     </div>
   </body>
+  <style>
+    .form {
+  bottom: 0;
+  margin-bottom: 3%;
+  margin-left: 3%;
+  position: fixed;
+  width: 100%;
+}
+input {
+  width: 95%;
+  border-color: black;
+  border-radius: 5px;
+}
+#messages {
+  overflow: auto;
+  height: 75%;
+  position: fixed;
+  width: 100%;
+  margin-left: 3%;
+  margin-top: 2%;
+}
+::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
+body {
+  color: white;
+  background-color:#cbf3f0;
+}
+p {
+background-color: #2ec4b6;
+padding: 4px;
+border-radius: 10px 10px 10px 0px;
+width: fit-content;
+}
+#message {
+border-style: none;
+padding-left: 1%;
+}
+#message:focus {
+outline: none;
+}
+nav {
+  background-color:#2ec4b6;
+}
+</style>
 </html>
 <script src="/js/dm.js"></script>

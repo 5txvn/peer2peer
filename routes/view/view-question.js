@@ -27,6 +27,8 @@ const questionsDB = new StormDB(questionsEngine);
 router.post('/:id', (req, res) => {
     const questionsEngine = new StormDB.localFileEngine("./db/questions.db");
 const questionsDB = new StormDB(questionsEngine);
+const loginsEngine = new StormDB.localFileEngine("./db/logins.db");
+const loginsDB = new StormDB(loginsEngine);
 const id = req.params.id
 const name = req.session.name
     const response = req.body.response
@@ -36,6 +38,8 @@ const name = req.session.name
     console.log(id)
     */
     questionsDB.get(id).get("responses").push([name, response]).save()
+    const answered = loginsDB.state[name]["questions-answered"]
+    loginsDB.get(name).get("questions-answered").set(answered + 1).save()
     //console.log(response)
     res.redirect('/')
 })

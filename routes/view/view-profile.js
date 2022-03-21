@@ -12,6 +12,9 @@ const db = new StormDB(engine);
             const data = db.state[req.params.username];
             const name = req.session.name
             res.render("pages/view-profile", {
+                username: req.params.username,
+                questionsAsked: data["questions-asked"],
+                questionsAnswered: data["questions-answered"],
                 u: req.session.username,
                 t: req.params.username
             })

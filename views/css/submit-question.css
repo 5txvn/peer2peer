@@ -5,7 +5,7 @@
 
 .input {
     border-radius: 5px;
-    border-style: solid;
+    border-style: none;
     border-color: black;
     border-width: 1px;
 }
@@ -21,9 +21,50 @@
 
 .textarea {
     border-radius: 5px;
-    border-style: solid;
+    border-style: none;
     border-color: black;
     border-width: 1px;
     width: 37.5%;
     height: 75px;
+}
+
+body {
+    color: white;
+    background-color:#cbf3f0;
+}
+
+.navbar {
+    background-color:#2ec4b6;
+    border-radius: 0px 0px px 25px;
+}
+
+.tag {
+    background-color:#2ec4b6;
+    display:inline-block;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.submit {
+    background-color: #009c9d
+}
+
+.latex {
+    background-color: #2ec4b6;
+    display: inline-block;
+    padding: 1.5px;
+    border-radius: 10px;
+}
+
+.heading {
+    background-color: #2ec4b6;
+    padding: 7.5px;
+    border-radius: 10px;
+    text-align: center;  
+    display: inline-block;
+    margin-bottom: 3%;
+}
+
+.div-center {
+    text-align: center;
 }

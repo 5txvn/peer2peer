@@ -14,12 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-expand-sm bg-light navbar-light nav">
+    <nav class="navbar navbar-expand-sm navbar-dark nav">
       <div class="navbar-collapse collapse justify-content-center order-2">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" href="/" style="float:left;">🧍</a>
-          </li>
           <li class="nav-item">
             <a class="nav-link"  style="margin-left:15px;" href="/">Home</a>
           </li>
@@ -41,9 +38,6 @@
           <li class="nav-item">
             <a class="nav-link active" href="/feedback">Feedback</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="/" style="float:left;">🧍</a>
-          </li>
         </ul>
       </div>
     </nav>
@@ -51,15 +45,55 @@
       <p style="margin-left:3%;" class="text-secondary info">(Your feedback is very important to us and will remain anonymous upon submitting)</p>
       <form action="/feedback" method="POST">
           <!-- problem -->
-          <h5 class="tag">Problem/Suggestion<span class="text-danger">*</span></h5>
+          <h5 class="tag">Problem/Suggestion<span class="text-danger">*</span></h5><br>
           <input class="input" name="problem" type="text"/>
           <p class="text-secondary info">Required. Please keep this part short and simple, summarizing the problem, bug, or suggestion (eg. Home page glitches out when question is submitted)</p>
           <!-- elaboration -->
-          <h5 class="tag">Elaborate on the Problem/Suggestion<span class="text-danger">*</span></h5>
+          <h5 class="tag">Elaborate on the Problem/Suggestion<span class="text-danger">*</span></h5><br>
           <textarea class="textarea" name="elaborate"></textarea>
           <p class="text-secondary info">Required. Please explain more about the problem and go into specifics, like the the example, explain how the home page is glitching out and exactly what is happening so we can replicate the instance and fix it.</p>
           <!-- submit -->
-          <input class="submit bg-danger" type="submit" value="Send Feedback"/>
+          <input class="submit" type="submit" value="Send Feedback"/>
       </form>
   </body>
+  <style>
+    nav {
+      background-color:#2ec4b6;
+    }
+    body {
+    color: white;
+    background-color:#cbf3f0;
+}
+.title {
+    background-color: #00ce6b;
+    padding: 7.5px;
+    border-radius: 10px;
+    text-align: center;  
+    display: inline-block;
+    margin-bottom: 3%;
+}
+.tag {
+    background-color:#2ec4b6;
+    display:inline-block;
+    padding: 5px;
+    border-radius: 10px;
+}
+.input {
+  border-style:none;
+}
+.textarea {
+  border-style:none;
+}
+.submit {
+  width:fit-content;
+  background-color:#2ec4b6;
+}
+  </style>
+  <script src="/scripts/socket.io.js"></script>
+<script>
+const socket = io()
+socket.on("reload", () => {
+    window.location.reload()
+})
+</script>
 </html>
