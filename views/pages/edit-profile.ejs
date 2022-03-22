@@ -46,10 +46,21 @@
       </div>
     </nav>
     <div class="main">
-      <div class="div-center"><h1 class="heading">Resources</h1><br></div>
-      <h3>Math</h3>
-      <h3>Science</h3>
-      <h3>Enlgish</h3>
+      <div class="div-center"><h1 class="heading">Edit your user profile</h1></div>
+        <form action="/edit-profile" method="POST">
+            <!-- subject -->
+            <h5 class="tag">Grade</h5><br>
+            <input class="input" name="grade" type="text" class="subject"/>
+            <!-- topic -->
+            <h5 class="tag">Background</h5><br>
+            <input class="input" name="background" type="text" class="topic"/>
+            <!-- more detail -->
+            <h5 class="tag">Description</h5><br>
+            <textarea class="textarea" name="description"></textarea>
+            <!--<p class="latex"><b>Latex is supported for questions. Wrap the latex in single dollar signs (ex. $\frac{x}{y}$)</b></p>-->
+            <!-- submit -->
+            <br><input class="submit" type="submit" value="Submit Question"/>
+        </form>
     </div>
   </body>
   <style>

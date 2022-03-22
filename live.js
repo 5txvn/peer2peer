@@ -5,8 +5,8 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const fs = require('fs')
 
-const file = "./views/pages/resources.ejs"
-const ejsPath = 'pages/resources.ejs'
+const file = "./views/pages/submit-question.ejs"
+const ejsPath = 'pages/submit-question.ejs'
 
 app.get('/', (req, res) => {
     res.render(ejsPath, {
